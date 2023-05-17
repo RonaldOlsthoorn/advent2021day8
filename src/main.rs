@@ -152,8 +152,6 @@ impl SeveSegmentsDigitDecoder {
 
     fn crack(&mut self, mut encoded_digits: Vec<String>) {
 
-        //println!("encoded digits {:?}", encoded_digits);
-
         let i = encoded_digits.iter().position(|s| s.len() == 2).unwrap();
         let encoded_one = encoded_digits[i].clone();
         encoded_digits.remove(i);
@@ -180,9 +178,6 @@ impl SeveSegmentsDigitDecoder {
             encoded_seven.chars().fold('a', |r, c| if encoded_one.contains(c) {r} else {c})
         );
 
-        //println!("encoder: {:?}", self.encode_map);
-        //println!("decoder: {:?}", self.decode_map);
-
         let six_segments: Vec<(usize, String)> = encoded_digits.iter().enumerate().filter_map(
             |s| if s.1.len() == 6 {Some((s.0,s.1.clone()))} else {None}).collect();
 
@@ -201,19 +196,10 @@ impl SeveSegmentsDigitDecoder {
             }
         }
 
-
-        //println!("encoder: {:?}", self.encode_map);
-        //println!("decoder: {:?}", self.decode_map);
-
         let f_key = encoded_seven.chars().find(|c| !self.decode_map.contains_key(c)).unwrap();
 
         self.decode_map.insert(f_key, 'f');
         self.encode_map.insert('f', f_key);
-
-
-        //println!("encoder: {:?}", self.encode_map);
-        //println!("decoder: {:?}", self.decode_map);
-
 
         for c in encoded_digits[0].chars() {
             if encoded_digits.iter().fold(true, |mut res, digit| {res &= digit.contains(c); return res})
@@ -222,10 +208,6 @@ impl SeveSegmentsDigitDecoder {
                 self.encode_map.insert('g', c);
             }
         }
-
-
-        //println!("encoder: {:?}", self.encode_map);
-        //println!("decoder: {:?}", self.decode_map);
 
         let mut encoded_three  = String::new();
 
@@ -242,11 +224,6 @@ impl SeveSegmentsDigitDecoder {
             }
         }
         
-
-        //println!("encoder: {:?}", self.encode_map);
-        //println!("decoder: {:?}", self.decode_map);
-
-
         for c in encoded_four.chars() {
             if !self.decode_map.contains_key(&c) {
                 self.decode_map.insert(c, 'b');
@@ -254,21 +231,12 @@ impl SeveSegmentsDigitDecoder {
             }
         }
 
-
-        //println!("encoder: {:?}", self.encode_map);
-        //println!("decoder: {:?}", self.decode_map);
-
         for c in encoded_six.chars() {
             if !self.decode_map.contains_key(&c) {
                 self.decode_map.insert(c, 'e');
                 self.encode_map.insert('e', c);
             }
         }
-
-
-        //println!("encoder: {:?}", self.encode_map);
-        //println!("decoder: {:?}", self.decode_map);
-
     }
 
     fn decode(&self, encoded_digit: &String) -> SevenSegmentsDigit {
@@ -300,23 +268,13 @@ fn main() {
         let mut decoder = SeveSegmentsDigitDecoder::new();
         decoder.crack(encoded_digits);
 
-
-        //println!("encoded answer: {:?}", encoded_answers);
-
         let decoded_digits = encoded_answers.iter().map(
             |encoded_answer| decoder.decode(encoded_answer)).collect::<Vec<SevenSegmentsDigit>>();
 
-        //println!("decoded digits: {:?}", decoded_digits);
-
         let decoded_answers: Vec<u8> = decoded_digits.into_iter().map(
             |decoded_answer| decoded_answer.try_into().unwrap()).collect();
-
-        //println!("decoded answers: {:?}", decoded_answers);
         
         decoded_answers.iter().rev().enumerate().for_each(|(i, digit)| res += 10u32.checked_pow(i as u32).unwrap() * (*digit as u32));
-
-        //println!("res {}", res);
-
     }
 
     println!("answer part II {}", res);
